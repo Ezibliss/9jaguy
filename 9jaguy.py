@@ -48,7 +48,14 @@ from bs4 import BeautifulSoup
 import re
 import time
 
+# Set environment variables from Streamlit secrets
+os.environ["XAI_API_KEY"] = st.secrets["xai_api_key"]
+os.environ["XAI_API_BASE"] = st.secrets["xai_api_base"]
+os.environ["XAI_API_TYPE"] = st.secrets["xai_api_type"]
 
+os.environ["HTTP_API_KEY"] = st.secrets["HTTP_API_KEY"]
+os.environ["HTTP_API_BASE"] = st.secrets["HTTP_API_BASE"]
+os.environ["HTTP_API_TYPE"] = st.secrets["HTTP_API_TYPE"]
 
 xai_api_key = os.getenv('XAI_API_KEY')
 print("XAI KEY:", xai_api_key)
