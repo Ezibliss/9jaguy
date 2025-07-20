@@ -6,7 +6,7 @@ from telegram.ext import ApplicationBuilder, CommandHandler, MessageHandler, Con
 from dotenv import load_dotenv
 
 
-load_dotenv()
+#load_dotenv()
 api_key = os.getenv("API_KEY")
 from datetime import datetime
 import openai
