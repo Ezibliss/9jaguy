@@ -8,6 +8,7 @@ langchain
 langchain-community
 langchain-core
 langchain-ollama
+langchain-xai
 langchain-huggingface
 faiss-cpu
 huggingface-hub
