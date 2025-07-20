@@ -57,7 +57,7 @@ HTTP_API_KEY = os.getenv('HTTP_API_KEY')
 HTTP_API_BASE = os.getenv('HTTP_API_BASE')
 
 
-file_path = "C:/Users/USER/Desktop/Pigin Chatbot Project/pages_name/New Text Document.txt"
+file_path = "New Text Document.txt"
 lists = []
 with open(file_path, 'r') as file:
     for line in file:
