@@ -9,6 +9,7 @@ langchain-community
 langchain-core
 langchain-ollama
 langchain-xai
+langchain-openai
 langchain-huggingface
 faiss-cpu
 huggingface-hub
@@ -19,4 +20,5 @@ sentence-transformers
 ollama
 python-telegram-bot
 feedparser
+xai-sdk
 
