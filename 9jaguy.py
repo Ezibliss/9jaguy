@@ -111,7 +111,7 @@ USER_AGENT = "naijaguy-app/1.0"
 os.environ["USER_AGENT"] = USER_AGENT
     
 
-file_path = "C:/Users/USER/Desktop/Pigin Chatbot Project/pages_name/New Text Document.txt"
+file_path = "New Text Document.txt"
 lists = []
 with open(file_path, 'r') as file:
     for line in file:
