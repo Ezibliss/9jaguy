@@ -21,6 +21,8 @@ ollama
 python-telegram-bot
 feedparser
 xai-sdk
+Flask-Session
+
 
 
 python-dotenv
@@ -46,4 +48,6 @@ ollama
 python-telegram-bot
 feedparser
 xai-sdk
+Flask-Session
+
 
