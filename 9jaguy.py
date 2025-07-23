@@ -336,20 +336,26 @@ async def reply(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
     await update.message.reply_text(reply_text)
 
-def run_telegram_bot():
-    asyncio.set_event_loop(asyncio.new_event_loop())
-    loop = asyncio.get_event_loop()
+#def run_telegram_bot():
+    #asyncio.set_event_loop(asyncio.new_event_loop())
+    #loop = asyncio.get_event_loop()
     
-    telegram_app = (
-        ApplicationBuilder()
-        .token(HTTP_API_KEY)
-        .build()
-    )
+    #telegram_app = (
+     #   ApplicationBuilder()
+     #    .token(HTTP_API_KEY)
+     #   .build()
+    #)
 
-    telegram_app.add_handler(CommandHandler("start", start))
-    telegram_app.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, reply))
+    #telegram_app.add_handler(CommandHandler("start", start))
+    #telegram_app.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, reply))
 
-    loop.run_until_complete(telegram_app.run_polling())
+    #loop.run_until_complete(telegram_app.run_polling())
+@flask_app.route('/webhook', methods=['POST'])
+def telegram_webhook():
+    if request.method == "POST":
+        update = Update.de_json(request.get_json(force=True), telegram_app.bot)
+        telegram_app.update_queue.put_nowait(update)
+        return "OK"
     
 def pidgin_news_summary():
     headlines = fetch_top_headlines()
@@ -394,7 +400,7 @@ If possible, scrap the web for any relevant information to answer the user's que
 
 If user want a roast, give the user a proper fun roast
 User ask you:
-"{user_input}"
+'{user_input}'
 
 Reply with short, real answer for only Naija Pidgin.
 """
@@ -422,10 +428,10 @@ if __name__ == "__main__":
 #    bot_thread = threading.Thread(target=run_telegram_bot)
 #    bot_thread.start()
 
-if __name__ == "__main__":
+#if __name__ == "__main__":
     # Start Telegram Bot in background
-    telegram_thread = threading.Thread(target=run_telegram_bot)
-    telegram_thread.start()
+    #telegram_thread = threading.Thread(target=run_telegram_bot)
+    #telegram_thread.start()
 
     # Start Flask app for Render
     flask_app.run(host="0.0.0.0", port=PORT)
