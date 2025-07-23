@@ -1,7 +1,9 @@
+import asyncio
 import os
 os.environ["USER_AGENT"] = "naijaguy-app/1.0" # Set a user agent for requests
 
-from telegram import Update
+from flask import Flask, request
+from telegram import Update, Bot
 from telegram.ext import ApplicationBuilder, CommandHandler, MessageHandler, ContextTypes, filters
 from dotenv import load_dotenv
 
@@ -43,19 +45,71 @@ from langchain.chains import create_history_aware_retriever, create_retrieval_ch
 from langchain.chains.combine_documents import create_stuff_documents_chain
 from dotenv import load_dotenv
 load_dotenv()
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, session, redirect
 from bs4 import BeautifulSoup
 import re
+from flask_session import Session
+import requests
+import os
 import time
 
 
 
+
+
 xai_api_key = os.getenv('XAI_API_KEY')
-print("XAI KEY:", xai_api_key)
+#print("XAI KEY:", xai_api_key)
 
 HTTP_API_KEY = os.getenv('HTTP_API_KEY')
 HTTP_API_BASE = os.getenv('HTTP_API_BASE')
 
+
+PORT = int(os.environ.get("PORT", 5000))
+
+flask_app = Flask(__name__)
+flask_app.secret_key = 'your-secret-key'
+flask_app.config['SESSION_TYPE'] = 'filesystem'
+Session(flask_app)
+flask_app.secret_key = os.getenv("flask_app.secret_key")
+
+#@flask_app.route('/', methods=['GET', 'POST'])
+#def home():
+#    user_input = ""
+#    response = ""
+
+#    if request.method == "POST":
+#        user_input = request.form.get("user_input")
+#        response = pidgin_prompt_chatbot(user_input)
+
+#    return render_template("index.html", user_input=user_input, response=response)
+    #return "This na the home page of the Naija Guy chatbot."
+
+@flask_app.route('/', methods=['GET', 'POST'])
+def home():
+    if 'history' not in session:
+        session['history'] = []
+
+    if request.method == "POST":
+        user_input = request.form.get("user_input")
+        response = pidgin_prompt_chatbot(user_input)
+
+        # Save both user message and bot reply to history
+        session['history'].append(('user', user_input))
+        session['history'].append(('9jaguy', response))
+        session.modified = True  # Mark session as changed
+
+    return render_template("index.html", history=session['history'])
+
+@flask_app.route('/clear')
+def clear_chat():
+    session.clear()
+    return redirect('/')
+
+
+# Text Scraping and Dictionary Logic
+USER_AGENT = "naijaguy-app/1.0"
+os.environ["USER_AGENT"] = USER_AGENT
+    
 
 file_path = "C:/Users/USER/Desktop/Pigin Chatbot Project/pages_name/New Text Document.txt"
 lists = []
@@ -265,6 +319,9 @@ def fetch_top_headlines():
     
     return "\n".join(headlines) if headlines else "No fresh headlines available."
 
+telegram_app = ApplicationBuilder().token(HTTP_API_KEY).build()
+
+
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_text("How you dey? I be your Naija Guy chatbot")
 
@@ -278,6 +335,21 @@ async def reply(update: Update, context: ContextTypes.DEFAULT_TYPE):
     reply_text = pidgin_prompt_chatbot(user_message)
 
     await update.message.reply_text(reply_text)
+
+def run_telegram_bot():
+    asyncio.set_event_loop(asyncio.new_event_loop())
+    loop = asyncio.get_event_loop()
+    
+    telegram_app = (
+        ApplicationBuilder()
+        .token(HTTP_API_KEY)
+        .build()
+    )
+
+    telegram_app.add_handler(CommandHandler("start", start))
+    telegram_app.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, reply))
+
+    loop.run_until_complete(telegram_app.run_polling())
     
 def pidgin_news_summary():
     headlines = fetch_top_headlines()
@@ -316,6 +388,10 @@ If person ask wetin be you name, reply I be your Naija Guy.
 
 If asked who create you reply na my guy Ezichi Bliss Abel create me.
 
+You can also have a normal conversation with the user, but always reply in Pidgin.
+
+If possible, scrap the web for any relevant information to answer the user's question, but always respond in pidgin.
+
 If user want a roast, give the user a proper fun roast
 User ask you:
 "{user_input}"
@@ -335,5 +411,24 @@ if __name__ == "__main__":
     app.add_handler(CommandHandler("start", start))
     app.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, reply))
 
+    # Start Telegram in background
+    import threading
+    #threading.Thread(target=telegram_app.run_polling, daemon=True).start()
+
+    #def run_telegram_bot():
+    #    telegram_app.run_polling()
+
+#if __name__ == "__main__":
+#    bot_thread = threading.Thread(target=run_telegram_bot)
+#    bot_thread.start()
+
+if __name__ == "__main__":
+    # Start Telegram Bot in background
+    telegram_thread = threading.Thread(target=run_telegram_bot)
+    telegram_thread.start()
+
+    # Start Flask app for Render
+    flask_app.run(host="0.0.0.0", port=PORT)
+
 # Run the bot
-app.run_polling()
+#app.run_polling()
