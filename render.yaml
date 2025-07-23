@@ -6,3 +6,11 @@ services:
     buildCommand: pip install -r requirements.txt
     startCommand: python 9jaguy.py
     
+services:
+  - type: web
+    name: 9jaguy-telegram-bot
+    env: python
+    plan: free
+    buildCommand: pip install -r requirements.txt
+    startCommand: python 9jaguy.py
+    
