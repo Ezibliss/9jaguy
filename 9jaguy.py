@@ -53,7 +53,7 @@ from flask_session import Session
 import requests
 import os
 import time
-
+import threading
 
 
 
@@ -438,18 +438,35 @@ async def reply(update: Update, context: ContextTypes.DEFAULT_TYPE):
 #    asyncio.run(telegram_app.process_update(update))  # run the async call in sync context
 #    return "OK", 200
 
+# Create a background event loop
+bg_loop = asyncio.new_event_loop()
+asyncio.set_event_loop(bg_loop)
+bg_loop.run_until_complete(telegram_app.initialize())
+# Start the loop in background thread
+threading.Thread(target=bg_loop.run_forever, daemon=True).start()
+
+
 @flask_app.route('/webhook', methods=['POST'])
 def telegram_webhook():
-    if request.method == "POST":
-        update = Update.de_json(request.get_json(force=True), telegram_app.bot)
+    update = Update.de_json(request.get_json(force=True), telegram_app.bot)
+    asyncio.run_coroutine_threadsafe(
+        telegram_app.process_update(update),
+        bg_loop
+    )
+    return "OK", 200
 
-        async def handle_update():
-            await telegram_app.initialize()  # <-- required
-            await telegram_app.process_update(update)
+#@flask_app.route('/webhook', methods=['POST'])
+#def telegram_webhook():
+#    if request.method == "POST":
+#        update = Update.de_json(request.get_json(force=True), telegram_app.bot)
 
-        asyncio.run(handle_update())  # Run the async task
+#        async def handle_update():
+#            await telegram_app.initialize()  # <-- required
+#            await telegram_app.process_update(update)
 
-    return "ok", 200
+#        asyncio.run(handle_update())  # Run the async task
+
+#    return "ok", 200
 
     
 def pidgin_news_summary():
@@ -513,7 +530,7 @@ Reply with short, real answer for only Naija Pidgin.
 #    app.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, reply))
 
     # Start Telegram in background
-    import threading
+    
     #threading.Thread(target=telegram_app.run_polling, daemon=True).start()
 
     #def run_telegram_bot():
