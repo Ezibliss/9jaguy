@@ -438,7 +438,7 @@ async def reply(update: Update, context: ContextTypes.DEFAULT_TYPE):
 #    asyncio.run(telegram_app.process_update(update))  # run the async call in sync context
 #    return "OK", 200
 
-@app.route('/webhook', methods=['POST'])
+@flask_app.route('/webhook', methods=['POST'])
 def telegram_webhook():
     if request.method == "POST":
         update = Update.de_json(request.get_json(force=True), telegram_app.bot)
