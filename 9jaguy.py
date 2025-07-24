@@ -430,13 +430,26 @@ async def reply(update: Update, context: ContextTypes.DEFAULT_TYPE):
 #        traceback.print_exc()
 #        return "Error", 500
 
-@flask_app.route('/webhook', methods=['POST'])
-def telegram_webhook():
-    update_data = request.get_json(force=True)
-    update = Update.de_json(update_data, telegram_app.bot)
+#@flask_app.route('/webhook', methods=['POST'])
+#def telegram_webhook():
+#    update_data = request.get_json(force=True)
+#    update = Update.de_json(update_data, telegram_app.bot)
 
-    asyncio.run(telegram_app.process_update(update))  # run the async call in sync context
-    return "OK", 200
+#    asyncio.run(telegram_app.process_update(update))  # run the async call in sync context
+#    return "OK", 200
+
+@app.route('/webhook', methods=['POST'])
+def telegram_webhook():
+    if request.method == "POST":
+        update = Update.de_json(request.get_json(force=True), telegram_app.bot)
+
+        async def handle_update():
+            await telegram_app.initialize()  # <-- required
+            await telegram_app.process_update(update)
+
+        asyncio.run(handle_update())  # Run the async task
+
+    return "ok", 200
 
     
 def pidgin_news_summary():
