@@ -22,7 +22,7 @@ python-telegram-bot
 feedparser
 xai-sdk
 Flask-Session
-traceback
+
 
 
 
@@ -50,6 +50,5 @@ python-telegram-bot
 feedparser
 xai-sdk
 Flask-Session
-traceback
 
 
