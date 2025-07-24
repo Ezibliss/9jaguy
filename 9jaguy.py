@@ -350,12 +350,26 @@ async def reply(update: Update, context: ContextTypes.DEFAULT_TYPE):
     #telegram_app.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, reply))
 
     #loop.run_until_complete(telegram_app.run_polling())
+#@flask_app.route('/webhook', methods=['POST'])
+#def telegram_webhook():
+#    if request.method == "POST":
+#        update = Update.de_json(request.get_json(force=True), telegram_app.bot)
+#        telegram_app.update_queue.put_nowait(update)
+#        return "OK"
+
+# Set webhook for Telegram
+
 @flask_app.route('/webhook', methods=['POST'])
 def telegram_webhook():
     if request.method == "POST":
-        update = Update.de_json(request.get_json(force=True), telegram_app.bot)
-        telegram_app.update_queue.put_nowait(update)
-        return "OK"
+        update_data = request.get_json(force=True)
+        update = Update.de_json(update_data, telegram_app.bot)
+
+        asyncio.run(telegram_app.initialize())  # Initialize once (optional if already done)
+        asyncio.run(telegram_app.process_update(update))
+        
+        return "OK", 200
+
     
 def pidgin_news_summary():
     headlines = fetch_top_headlines()
