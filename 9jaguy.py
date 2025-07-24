@@ -1,3 +1,4 @@
+import traceback
 import asyncio
 import os
 os.environ["USER_AGENT"] = "naijaguy-app/1.0" # Set a user agent for requests
@@ -399,19 +400,36 @@ async def reply(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 #    return "OK", 200
 
+#@flask_app.route('/webhook', methods=['POST'])
+#def telegram_webhook():
+#    try:
+#        update_data = request.get_json(force=True)
+#        update = Update.de_json(update_data, telegram_app.bot)
+        
+#        asyncio.run(telegram_app.process_update(update))
+        
+#        return "OK", 200
+#    except Exception as e:
+#        print(f"Webhook error: {e}")
+#        traceback.print_exc()
+#        return "Error", 500
+
 @flask_app.route('/webhook', methods=['POST'])
 def telegram_webhook():
     try:
+        print("🔔 Webhook triggered")
         update_data = request.get_json(force=True)
         update = Update.de_json(update_data, telegram_app.bot)
-        
-        asyncio.run(telegram_app.process_update(update))
-        
+
+        loop = asyncio.get_event_loop()
+        loop.run_until_complete(telegram_app.process_update(update))
+
         return "OK", 200
     except Exception as e:
-        print(f"Webhook error: {e}")
+        print("❌ Webhook error:")
         traceback.print_exc()
         return "Error", 500
+
 
     
 def pidgin_news_summary():
