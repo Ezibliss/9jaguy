@@ -359,16 +359,25 @@ async def reply(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 # Set webhook for Telegram
 
-@flask_app.route('/webhook', methods=['POST'])
-def telegram_webhook():
-    if request.method == "POST":
-        update_data = request.get_json(force=True)
-        update = Update.de_json(update_data, telegram_app.bot)
+#@flask_app.route('/webhook', methods=['POST'])
+#def telegram_webhook():
+#    if request.method == "POST":
+#        update_data = request.get_json(force=True)
+#        update = Update.de_json(update_data, telegram_app.bot)
 
-        asyncio.run(telegram_app.initialize())  # Initialize once (optional if already done)
-        asyncio.run(telegram_app.process_update(update))
+#        asyncio.run(telegram_app.initialize())  # Initialize once (optional if already done)
+#        asyncio.run(telegram_app.process_update(update))
         
-        return "OK", 200
+#        return "OK", 200
+
+
+@flask_app.route('/webhook', methods=['POST'])
+async def telegram_webhook():
+    update_data = request.get_json(force=True)
+    update = Update.de_json(update_data, telegram_app.bot)
+
+    await telegram_app.process_update(update)
+    return "OK", 200
 
     
 def pidgin_news_summary():
