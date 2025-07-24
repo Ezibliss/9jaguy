@@ -379,25 +379,38 @@ async def reply(update: Update, context: ContextTypes.DEFAULT_TYPE):
 #    await telegram_app.process_update(update)
 #    return "OK", 200
 
+#@flask_app.route('/webhook', methods=['POST'])
+#def telegram_webhook():
+#    try:
+#        update_data = request.get_json(force=True)
+#        update = Update.de_json(update_data, telegram_app.bot)
+
+#        try:
+#            loop = asyncio.get_event_loop()
+#        except RuntimeError:
+#            loop = asyncio.new_event_loop()
+#            asyncio.set_event_loop(loop)
+
+#        loop.run_until_complete(telegram_app.process_update(update))
+
+#    except Exception as e:
+#        print(f"Error in webhook: {e}")
+#        return "Error", 500
+
+#    return "OK", 200
+
 @flask_app.route('/webhook', methods=['POST'])
 def telegram_webhook():
     try:
         update_data = request.get_json(force=True)
         update = Update.de_json(update_data, telegram_app.bot)
-
-        try:
-            loop = asyncio.get_event_loop()
-        except RuntimeError:
-            loop = asyncio.new_event_loop()
-            asyncio.set_event_loop(loop)
-
-        loop.run_until_complete(telegram_app.process_update(update))
-
+        
+        asyncio.run(telegram_app.process_update(update))
+        
+        return "OK", 200
     except Exception as e:
-        print(f"Error in webhook: {e}")
+        print(f"Webhook error: {e}")
         return "Error", 500
-
-    return "OK", 200
 
     
 def pidgin_news_summary():
