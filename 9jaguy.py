@@ -412,10 +412,10 @@ Reply with short, real answer for only Naija Pidgin.
         return output
 
 
-if __name__ == "__main__":
-    app = ApplicationBuilder().token(HTTP_API_KEY).build()
-    app.add_handler(CommandHandler("start", start))
-    app.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, reply))
+#if __name__ == "__main__":
+#    app = ApplicationBuilder().token(HTTP_API_KEY).build()
+#    app.add_handler(CommandHandler("start", start))
+#    app.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, reply))
 
     # Start Telegram in background
     import threading
@@ -432,6 +432,11 @@ if __name__ == "__main__":
     # Start Telegram Bot in background
     #telegram_thread = threading.Thread(target=run_telegram_bot)
     #telegram_thread.start()
+
+if __name__ == "__main__":
+    telegram_app.add_handler(CommandHandler("start", start))
+    telegram_app.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, reply))
+
 
     # Start Flask app for Render
     flask_app.run(host="0.0.0.0", port=PORT)
