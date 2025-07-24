@@ -410,6 +410,7 @@ def telegram_webhook():
         return "OK", 200
     except Exception as e:
         print(f"Webhook error: {e}")
+        traceback.print_exc()
         return "Error", 500
 
     
