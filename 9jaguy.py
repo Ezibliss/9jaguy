@@ -308,7 +308,8 @@ def fetch_top_headlines():
         "https://rss.dw.com/rdf/rss-en-all",
         "https://www.goal.com/en-in/news/rss.xml",
         "https://rss.app/feeds/eurosport-uk-rss-feed.xml",
-        "https://www.supersport.com/rss/video"
+        "https://www.supersport.com/rss/video",
+        "https://news.google.com/rss"
     ]
     
     headlines = []
@@ -480,7 +481,8 @@ def pidgin_news_summary():
 These na the latest headlines: {combined}
 
 Abeg summarize the main gist for me in Naija Pidgin English.
-Talk like person wey dey give street gist. No talk like AI.
+Talk like person wey dey give street gist. No talk like AI, don"t mention anything like link or RSS feed.
+
 """
     response = llm.invoke(prompt)
 
@@ -509,7 +511,8 @@ If asked who create you reply na my guy Ezichi Bliss Abel create me.
 You can also have a normal conversation with the user, but always reply in Pidgin.
 
 If possible, scrap the web for any relevant information to answer the user's question, but always respond in pidgin.
-
+Perform any task possible and legitimate.
+Generate an image if possible
 If user want a roast, give the user a proper fun roast
 User ask you:
 '{user_input}'
