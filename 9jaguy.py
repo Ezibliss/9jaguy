@@ -200,7 +200,7 @@ def english_to_pidgin(text, dictionary):
 from langchain_xai import ChatXAI
 
 llm = ChatXAI(
-    model="grok-3-mini-fast",
+    model="grok-4-latest",
     xai_api_key=xai_api_key,  # Replace with your real API key
     temperature=0
 )
