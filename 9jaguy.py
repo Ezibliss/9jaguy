@@ -14,7 +14,7 @@ api_key = os.getenv("API_KEY")
 from datetime import datetime
 import openai
 from langchain_community.embeddings import OpenAIEmbeddings, HuggingFaceEmbeddings
-from langchain_text_splitter import RecursiveCharacterTextSplitter
+from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain_community.llms import OpenAI
 from langchain_community.llms import Ollama
 from langchain_community.document_loaders import PyPDFLoader
